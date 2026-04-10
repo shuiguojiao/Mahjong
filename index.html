@@ -11,6 +11,7 @@ body {
   background: linear-gradient(145deg, #0f3d1e, #1b5e30 40%, #145228);
   color: #f0ebe0;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -211,18 +212,35 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; letter-spacing: 
 .loading { text-align: center; padding: 40px; font-size: 1.1rem; opacity: 0.7; }
 
 @media (max-width: 500px) {
-  body { padding: 12px 8px; }
-  h1 { font-size: 1.3rem; }
-  .stats .stat-item { padding: 6px 12px; }
-  .stats .label { font-size: 0.7rem; }
-  .stats .value { font-size: 1rem; }
-  .tile { width: 40px; height: 56px; }
-  .tile .num { font-size: 1.15rem; }
-  .tile .suit { font-size: 0.7rem; }
-  .hand { gap: 3px; }
-  .feedback { padding: 16px 14px; }
+  body {
+    padding: 10px 6px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    justify-content: flex-start;
+  }
+  h1 { font-size: 1.2rem; order: 0; }
+  .subtitle { order: 1; margin-bottom: 8px; }
+  .stats { order: 2; }
+  .stats .stat-item { padding: 5px 10px; }
+  .stats .label { font-size: 0.68rem; }
+  .stats .value { font-size: 0.95rem; }
+  .feedback { order: 3; padding: 14px 12px; margin-bottom: 10px; }
+  .controls { order: 4; margin-bottom: 8px; }
+  .hand-area {
+    order: 5;
+    margin-top: auto;
+    margin-bottom: 8px;
+    width: 100%;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .hand-label { font-size: 0.78rem; margin-bottom: 6px; }
+  .tile { width: 48px; height: 66px; }
+  .tile .num { font-size: 1.5rem; }
+  .tile .suit { font-size: 0.85rem; }
+  .hand { gap: 4px; justify-content: center; }
   .comparison { gap: 8px; }
-  .comp-box { padding: 10px 8px; }
+  .comp-box { padding: 8px 6px; }
+  .btn { padding: 8px 24px; font-size: 0.9rem; }
 }
 </style>
 </head>
