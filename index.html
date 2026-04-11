@@ -18,23 +18,29 @@ body {
   padding: 16px;
 }
 h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; letter-spacing: 2px; }
-.subtitle { font-size: 0.85rem; opacity: 0.6; margin-bottom: 16px; text-align: center; }
+.subtitle { font-size: 0.85rem; opacity: 0.6; margin-bottom: 12px; text-align: center; }
+
+/* Level selector */
+.level-selector {
+  display: flex; gap: 0; margin-bottom: 16px;
+  background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.level-btn {
+  padding: 8px 20px; background: transparent; color: #f0ebe0; border: none;
+  font-size: 0.88rem; cursor: pointer; transition: all 0.2s; font-weight: 500; white-space: nowrap;
+}
+.level-btn:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.1); }
+.level-btn.active { background: rgba(251,191,36,0.25); color: #fbbf24; font-weight: bold; }
+.level-btn:hover:not(.active) { background: rgba(255,255,255,0.08); }
 
 /* Stats bar */
 .stats {
-  display: flex;
-  gap: 0;
-  justify-content: center;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-  background: rgba(0,0,0,0.25);
-  border-radius: 8px;
-  overflow: hidden;
+  display: flex; gap: 0; justify-content: center; margin-bottom: 20px;
+  font-size: 0.9rem; background: rgba(0,0,0,0.25); border-radius: 8px; overflow: hidden;
 }
 .stats .stat-item {
-  padding: 8px 16px;
-  text-align: center;
-  white-space: nowrap;
+  padding: 8px 16px; text-align: center; white-space: nowrap;
   border-right: 1px solid rgba(255,255,255,0.08);
 }
 .stats .stat-item:last-child { border-right: none; }
@@ -42,156 +48,79 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; letter-spacing: 
 .stats .value { font-weight: bold; color: #ffd700; font-size: 1.1rem; }
 
 /* Hand area */
-.hand-area {
-  margin-bottom: 20px;
-  text-align: center;
-}
-.hand-label {
-  font-size: 0.85rem;
-  opacity: 0.7;
-  margin-bottom: 8px;
-}
-.hand {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
-}
+.hand-area { margin-bottom: 20px; text-align: center; }
+.hand-label { font-size: 0.85rem; opacity: 0.7; margin-bottom: 8px; }
+.hand { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
+
+/* Mahjong tile */
 .tile {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 62px;
-  background: linear-gradient(to bottom, #ffffff, #f5f0e6);
-  border: 1.5px solid #c8c0a8;
-  border-radius: 6px;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 60px;
+  background: linear-gradient(170deg, #ffffff 0%, #f8f4ea 40%, #ede7d4 100%);
+  border: 1.5px solid #b8b0a0; border-radius: 5px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
-  user-select: none;
-  transition: transform 0.12s, box-shadow 0.12s;
-  position: relative;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.9),
+    inset -1px 0 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.05);
+  user-select: none; transition: transform 0.12s, box-shadow 0.12s;
+  position: relative; overflow: hidden;
+}
+.tile::before {
+  content: ''; position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  border: 1px solid rgba(180,170,150,0.3); border-radius: 3px; pointer-events: none;
 }
 .tile:hover:not(.disabled) {
   transform: translateY(-6px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.8);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.9);
 }
 .tile:active:not(.disabled) { transform: translateY(-2px); }
 .tile.disabled { cursor: default; opacity: 0.65; }
 .tile.selected {
   border-color: #e83030;
-  box-shadow: 0 0 0 2px rgba(232,48,48,0.4), 0 4px 12px rgba(232,48,48,0.3);
+  box-shadow: 0 0 0 2px rgba(232,48,48,0.5), 0 4px 12px rgba(232,48,48,0.3);
   transform: translateY(-8px);
 }
 .tile.optimal {
   border-color: #2ecc40;
-  box-shadow: 0 0 0 2px rgba(46,204,64,0.4), 0 4px 12px rgba(46,204,64,0.3);
+  box-shadow: 0 0 0 2px rgba(46,204,64,0.5), 0 4px 12px rgba(46,204,64,0.3);
 }
-.tile .num {
-  font-size: 1.3rem;
-  font-weight: 800;
-  line-height: 1.1;
-}
-.tile .suit {
-  font-size: 0.75rem;
-  font-weight: bold;
-  line-height: 1;
-}
-.tile.man .num { color: #c41818; }
-.tile.man .suit { color: #c41818; }
-.tile.pin .num { color: #1746b0; }
-.tile.pin .suit { color: #1746b0; }
-.tile.sou .num { color: #117a30; }
-.tile.sou .suit { color: #117a30; }
-.tile.honor .num { color: #1a1a1a; font-size: 1.15rem; }
+.tile svg { width: 34px; height: 50px; position: relative; z-index: 1; }
 
 /* Feedback area */
 .feedback {
-  background: rgba(0,0,0,0.28);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
-  padding: 20px;
-  max-width: 560px;
-  width: 100%;
-  margin-bottom: 16px;
-  display: none;
+  background: rgba(0,0,0,0.28); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.06); border-radius: 14px;
+  padding: 20px; max-width: 560px; width: 100%; margin-bottom: 16px; display: none;
 }
 .feedback.show { display: block; }
-.feedback-header {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 14px;
-  text-align: center;
-}
+.feedback-header { font-size: 1.2rem; font-weight: bold; margin-bottom: 14px; text-align: center; }
 .feedback-header.correct { color: #4ade80; }
 .feedback-header.wrong { color: #fb923c; }
-.comparison {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 14px;
-}
+.comparison { display: flex; gap: 12px; justify-content: center; margin-bottom: 14px; }
 .comp-box {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 10px;
-  padding: 12px 16px;
-  text-align: center;
-  flex: 1;
-  min-width: 0;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px; padding: 12px 16px; text-align: center; flex: 1; min-width: 0;
 }
 .comp-box .comp-label { font-size: 0.78rem; opacity: 0.6; margin-bottom: 4px; }
 .comp-box .comp-tile { font-size: 1.1rem; font-weight: bold; margin-bottom: 2px; }
 .comp-box .comp-outs { font-size: 1.5rem; font-weight: bold; color: #fbbf24; }
 .comp-box .comp-outs-label { font-size: 0.72rem; opacity: 0.5; }
 .explanation {
-  background: rgba(255,255,255,0.05);
-  border-radius: 8px;
-  padding: 12px 14px;
-  margin-bottom: 10px;
-  font-size: 0.88rem;
-  line-height: 1.6;
+  background: rgba(255,255,255,0.05); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px; font-size: 0.88rem; line-height: 1.6;
 }
 .tip {
-  background: rgba(251,191,36,0.08);
-  border-left: 3px solid #fbbf24;
-  border-radius: 0 8px 8px 0;
-  padding: 10px 14px;
-  font-size: 0.84rem;
-  line-height: 1.5;
-  color: #fde68a;
+  background: rgba(251,191,36,0.08); border-left: 3px solid #fbbf24;
+  border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 0.84rem; line-height: 1.5; color: #fde68a;
 }
-.score-display {
-  text-align: center;
-  margin-top: 12px;
-  font-size: 1rem;
-  opacity: 0.8;
-}
-.score-display .score-val {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #fbbf24;
-  opacity: 1;
-}
+.score-display { text-align: center; margin-top: 12px; font-size: 1rem; opacity: 0.8; }
+.score-display .score-val { font-size: 2rem; font-weight: bold; color: #fbbf24; opacity: 1; }
 
 /* Controls */
-.controls {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 16px;
-}
+.controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; }
 .btn {
-  padding: 10px 32px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.15s;
+  padding: 10px 32px; border: none; border-radius: 10px;
+  font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.15s;
 }
 .btn-next { background: #fbbf24; color: #1a1a1a; }
 .btn-next:hover { background: #fcd34d; }
@@ -199,48 +128,39 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; letter-spacing: 
 .btn-restart:hover { background: rgba(255,255,255,0.2); }
 .btn:disabled { opacity: 0.3; cursor: default; }
 
-/* Outs detail */
-.outs-detail {
-  margin-top: 10px;
-  font-size: 0.8rem;
-  opacity: 0.6;
-  line-height: 1.6;
-}
+.outs-detail { margin-top: 10px; font-size: 0.8rem; opacity: 0.6; line-height: 1.6; }
 .outs-detail summary { cursor: pointer; margin-bottom: 4px; }
-
-/* Loading */
 .loading { text-align: center; padding: 40px; font-size: 1.1rem; opacity: 0.7; }
+.level-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 0.72rem; font-weight: bold; margin-left: 8px; vertical-align: middle;
+}
+.level-badge.lv1 { background: rgba(74,222,128,0.2); color: #4ade80; }
+.level-badge.lv2 { background: rgba(251,146,60,0.2); color: #fb923c; }
 
 @media (max-width: 500px) {
-  body {
-    padding: 10px 6px;
-    min-height: 100vh;
-    min-height: 100dvh;
-    justify-content: flex-start;
-  }
+  body { padding: 10px 6px; justify-content: flex-start; }
   h1 { font-size: 1.2rem; order: 0; }
   .subtitle { order: 1; margin-bottom: 8px; }
-  .stats { order: 2; }
+  .level-selector { order: 2; margin-bottom: 10px; }
+  .stats { order: 3; }
   .stats .stat-item { padding: 5px 10px; }
   .stats .label { font-size: 0.68rem; }
   .stats .value { font-size: 0.95rem; }
-  .feedback { order: 3; padding: 14px 12px; margin-bottom: 10px; }
-  .controls { order: 4; margin-bottom: 8px; }
+  .feedback { order: 4; padding: 14px 12px; margin-bottom: 10px; }
+  .controls { order: 5; margin-bottom: 8px; }
   .hand-area {
-    order: 5;
-    margin-top: auto;
-    margin-bottom: 8px;
-    width: 100%;
+    order: 6; margin-top: auto; margin-bottom: 8px; width: 100%;
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
   .hand-label { font-size: 0.78rem; margin-bottom: 6px; }
   .tile { width: 48px; height: 66px; }
-  .tile .num { font-size: 1.5rem; }
-  .tile .suit { font-size: 0.85rem; }
-  .hand { gap: 4px; justify-content: center; }
+  .tile svg { width: 40px; height: 56px; }
+  .hand { gap: 3px; }
   .comparison { gap: 8px; }
   .comp-box { padding: 8px 6px; }
   .btn { padding: 8px 24px; font-size: 0.9rem; }
+  .level-btn { padding: 7px 14px; font-size: 0.82rem; }
 }
 </style>
 </head>
@@ -249,8 +169,14 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; letter-spacing: 
 <h1>麻将出牌训练器</h1>
 <div class="subtitle">选择最优的一张牌打出</div>
 
+<div class="level-selector">
+  <button class="level-btn active" data-level="1">基础</button>
+  <button class="level-btn" data-level="2">进阶</button>
+</div>
+
 <div class="stats">
   <div class="stat-item"><span class="label">当前</span><span class="value">第 <span id="round">1</span> 手</span></div>
+  <div class="stat-item"><span class="label">难度</span><span class="value" id="level-display">基础</span></div>
   <div class="stat-item"><span class="label">平均分</span><span class="value" id="avg-score">-</span></div>
   <div class="stat-item"><span class="label">已完成</span><span class="value"><span id="total-rounds">0</span> 手</span></div>
 </div>
@@ -270,9 +196,9 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; letter-spacing: 
 <script>
 // ===== Tile Definitions =====
 const SUIT_MAN = 0, SUIT_PIN = 1, SUIT_SOU = 2, SUIT_HONOR = 3;
-const HONOR_NAMES = ['East','South','West','North','Red','Green','White'];
 const HONOR_CHARS = ['東','南','西','北','中','發','白'];
 const SUIT_CHARS = ['万','筒','条'];
+const MAN_NUMERALS = ['一','二','三','四','五','六','七','八','九'];
 
 function tileToString(t) {
   if (t >= 27) return HONOR_CHARS[t - 27];
@@ -281,26 +207,259 @@ function tileToString(t) {
   return num + SUIT_CHARS[suit];
 }
 
-function tileDisplayInfo(t) {
-  if (t >= 27) {
-    return { num: HONOR_CHARS[t - 27], suit: '', cls: 'honor' };
-  }
+// ===== SVG Tile Rendering =====
+// viewBox="0 0 40 58" for all tiles
+
+function renderTileSVG(t) {
+  if (t >= 27) return renderHonorSVG(t);
   const suit = Math.floor(t / 9);
   const num = (t % 9) + 1;
-  return {
-    num: String(num),
-    suit: SUIT_CHARS[suit],
-    cls: ['man','pin','sou'][suit]
+  if (suit === SUIT_MAN) return renderManSVG(num);
+  if (suit === SUIT_PIN) return renderPinSVG(num);
+  return renderSouSVG(num);
+}
+
+// --- 万子: Chinese numeral + 萬 (traditional), balanced proportions ---
+function renderManSVG(num) {
+  return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="20" text-anchor="middle" dominant-baseline="central"
+      font-size="22" font-weight="900" fill="#1a1a1a"
+      font-family="Songti SC,STSong,SimSun,serif">${MAN_NUMERALS[num - 1]}</text>
+    <text x="20" y="43" text-anchor="middle" dominant-baseline="central"
+      font-size="20" font-weight="900" fill="#c41818"
+      font-family="Songti SC,STSong,SimSun,serif">萬</text>
+  </svg>`;
+}
+
+// --- 筒子: Concentric rings with color variation (blue, green, red) ---
+function pinDot(cx, cy, r, color) {
+  const colors = {
+    blue:  { outer: '#1a237e', inner: '#1565C0', dot: '#1565C0' },
+    green: { outer: '#1B5E20', inner: '#2E7D32', dot: '#2E7D32' },
+    red:   { outer: '#B71C1C', inner: '#C62828', dot: '#C62828' }
   };
+  const c = colors[color] || colors.blue;
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${c.outer}" stroke-width="1.6"/>
+    <circle cx="${cx}" cy="${cy}" r="${r * 0.55}" fill="none" stroke="${c.inner}" stroke-width="0.8"/>
+    <circle cx="${cx}" cy="${cy}" r="${r * 0.22}" fill="${c.dot}"/>`;
+}
+
+function renderPinSVG(num) {
+  const cx = 20, cy = 29;
+
+  if (num === 1) {
+    // 1筒: Elaborate concentric rings (blue outer, green middle, red inner, flower center)
+    return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="${cx}" cy="${cy}" r="15" fill="none" stroke="#1a237e" stroke-width="1.8"/>
+      <circle cx="${cx}" cy="${cy}" r="13" fill="none" stroke="#1565C0" stroke-width="1.2"/>
+      <circle cx="${cx}" cy="${cy}" r="11" fill="none" stroke="#1B5E20" stroke-width="1.5"/>
+      <circle cx="${cx}" cy="${cy}" r="9" fill="none" stroke="#2E7D32" stroke-width="1"/>
+      <circle cx="${cx}" cy="${cy}" r="7" fill="none" stroke="#B71C1C" stroke-width="1.5"/>
+      <circle cx="${cx}" cy="${cy}" r="5" fill="none" stroke="#C62828" stroke-width="1"/>
+      <circle cx="${cx}" cy="${cy}" r="3" fill="#C62828"/>
+    </svg>`;
+  }
+
+  // Layout positions and color patterns matching real mahjong
+  const R = 4.5;
+  const sx = 7, sy = 8;
+
+  const configs = {
+    2: { pos: [[cx,cy-sy],[cx,cy+sy]], colors: ['blue','green'] },
+    3: { pos: [[cx-sx,cy-sy-2],[cx,cy],[cx+sx,cy+sy+2]], colors: ['blue','red','green'] },
+    4: { pos: [[cx-sx,cy-sy],[cx+sx,cy-sy],[cx-sx,cy+sy],[cx+sx,cy+sy]], colors: ['green','blue','red','green'] },
+    5: { pos: [[cx-sx,cy-sy],[cx+sx,cy-sy],[cx,cy],[cx-sx,cy+sy],[cx+sx,cy+sy]], colors: ['green','blue','red','blue','green'] },
+    6: { pos: [[cx-sx,cy-14],[cx+sx,cy-14],[cx-sx,cy+2],[cx+sx,cy+2],[cx-sx,cy+14],[cx+sx,cy+14]], colors: ['green','green','red','red','red','red'] },
+    7: { pos: [[cx-sx,cy-19],[cx,cy-12],[cx+sx,cy-5],[cx-sx,cy+5],[cx+sx,cy+5],[cx-sx,cy+15],[cx+sx,cy+15]], colors: ['green','green','green','red','red','red','red'] },
+    8: { pos: [[cx-sx,cy-12],[cx+sx,cy-12],[cx-sx,cy-4],[cx+sx,cy-4],[cx-sx,cy+4],[cx+sx,cy+4],[cx-sx,cy+12],[cx+sx,cy+12]], colors: ['blue','blue','blue','blue','blue','blue','blue','blue'] },
+    9: { pos: [[cx-sx,cy-11],[cx,cy-11],[cx+sx,cy-11],[cx-sx,cy],[cx,cy],[cx+sx,cy],[cx-sx,cy+11],[cx,cy+11],[cx+sx,cy+11]], colors: ['green','green','green','red','red','red','green','green','green'] }
+  };
+
+  const cfg = configs[num];
+  const r = num <= 5 ? R : R * 0.82;
+  let dots = '';
+  for (let i = 0; i < cfg.pos.length; i++) {
+    dots += pinDot(cfg.pos[i][0], cfg.pos[i][1], r, cfg.colors[i]);
+  }
+  return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">${dots}</svg>`;
+}
+
+// --- 条子: Bamboo sticks (vertical capsules, stacked in columns) ---
+function bambooStick(cx, cy, h, color) {
+  const w = 5;
+  const x = cx - w / 2;
+  const y = cy - h / 2;
+  const fill = color === 'red' ? '#C62828' : '#2E7D32';
+  const light = color === 'red' ? '#EF5350' : '#66BB6A';
+  const dark = color === 'red' ? '#8E0000' : '#1B5E20';
+  // Rounded capsule with highlight and joint line
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2.2" fill="${fill}"/>
+    <rect x="${x + 0.8}" y="${y + 0.5}" width="1.2" height="${h - 1}" rx="0.6" fill="${light}" opacity="0.4"/>
+    <line x1="${x + 0.5}" y1="${cy}" x2="${x + w - 0.5}" y2="${cy}" stroke="${dark}" stroke-width="0.8" opacity="0.6"/>`;
+}
+
+function renderSouSVG(num) {
+  if (num === 1) {
+    // 1条: Bird perched on bamboo (traditional)
+    return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">
+      ${bambooStick(20, 42, 18, 'green')}
+      <ellipse cx="20" cy="18" rx="8" ry="6" fill="#2E7D32"/>
+      <ellipse cx="20" cy="18" rx="6" ry="4.5" fill="#43A047"/>
+      <circle cx="20" cy="11" r="4" fill="#C62828"/>
+      <circle cx="20" cy="11" r="3" fill="#EF5350"/>
+      <circle cx="21.2" cy="10.3" r="0.8" fill="#1a1a1a"/>
+      <polygon points="24,11.5 27.5,12.5 24,13" fill="#F57F17"/>
+      <path d="M13,16 Q16,20 20,18" stroke="#1B5E20" stroke-width="0.8" fill="none"/>
+      <path d="M27,16 Q24,20 20,18" stroke="#1B5E20" stroke-width="0.8" fill="none"/>
+    </svg>`;
+  }
+
+  if (num === 3) return renderSou3SVG();
+  if (num === 7) return renderSou7SVG();
+  if (num === 8) return renderSou8SVG();
+
+  // Column-based layout: sticks stacked vertically in columns
+  const cx = 20, cy = 29;
+  const colGap = 8;
+  const rowGap = 1.5;
+
+  const configs = {
+    2: { cols: [{n:2,c:'green',h:14}] },
+    4: { cols: [{n:2,c:'green',h:14}, {n:2,c:'green',h:14}] },
+    5: { cols: [{n:2,c:'green',h:12}, {n:1,c:'red',h:9}, {n:2,c:'green',h:12}] },
+    6: { cols: [{n:2,c:'green',h:14}, {n:2,c:'green',h:14}, {n:2,c:'green',h:14}] },
+    9: { cols: [{n:3,c:'green',h:10}, {n:3,c:'red',h:10}, {n:3,c:'green',h:10}] }
+  };
+
+  const cfg = configs[num];
+  const nCols = cfg.cols.length;
+  const startX = cx - (nCols - 1) * colGap / 2;
+
+  let sticks = '';
+  for (let ci = 0; ci < nCols; ci++) {
+    const col = cfg.cols[ci];
+    const colH = col.n * col.h + (col.n - 1) * rowGap;
+    const colStartY = cy - colH / 2 + col.h / 2;
+    for (let si = 0; si < col.n; si++) {
+      sticks += bambooStick(startX + ci * colGap, colStartY + si * (col.h + rowGap), col.h, col.c);
+    }
+  }
+  return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">${sticks}</svg>`;
+}
+
+// 3条: 1 on top, 2 on bottom
+function renderSou3SVG() {
+  const cx = 20, cy = 29, gap = 8, h = 14, vgap = 16;
+  let s = '';
+  s += bambooStick(cx, cy - vgap/2, h, 'green');          // top center
+  s += bambooStick(cx - gap/2, cy + vgap/2, h, 'green');   // bottom left
+  s += bambooStick(cx + gap/2, cy + vgap/2, h, 'green');   // bottom right
+  return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+
+// 7条: row1=1 red center, row2=3 green, row3=3 green (total 7)
+function renderSou7SVG() {
+  const cx = 20, cy = 29, gap = 8, h = 10, vgap = 12;
+  let s = '';
+  // Row 1: 1 red center only
+  s += bambooStick(cx, cy - vgap, h, 'red');
+  // Row 2: 3 green
+  s += bambooStick(cx - gap, cy, h, 'green');
+  s += bambooStick(cx,       cy, h, 'green');
+  s += bambooStick(cx + gap, cy, h, 'green');
+  // Row 3: 3 green
+  s += bambooStick(cx - gap, cy + vgap, h, 'green');
+  s += bambooStick(cx,       cy + vgap, h, 'green');
+  s += bambooStick(cx + gap, cy + vgap, h, 'green');
+  return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+
+// 8条: Outlined W (top) + M (bottom) with vertical joints at turning points
+function renderSou8SVG() {
+  const g = '#2E7D32', gl = '#4CAF50';
+  // W shape: continuous outlined path with vertical segments at peaks/valleys
+  // 5 turning points: top-left, bottom-q1, top-center, bottom-q3, top-right
+  const L = 8, R = 32, cx = 20;
+  const q1 = L + (R-L)*0.25, q3 = L + (R-L)*0.75;
+  // W top half
+  const wT = 3, wB = 26, jH = 4; // joint height at each turn
+  // Path: down from top-left, diagonal to valley, up at valley, diagonal to peak...
+  // Draw as outlined shape (two parallel paths offset)
+  const hw = 2; // half-width of the outlined stroke
+
+  let s = '';
+  // Draw W as a thick path with stroke
+  // W zigzag: peaks at (L, wT), (cx, wT), (R, wT); valleys at (q1, wB), (q3, wB)
+  // Each peak/valley has a short vertical segment (joint)
+  s += `<path d="
+    M ${L},${wT} L ${L},${wT+jH}
+    L ${q1},${wB-jH} L ${q1},${wB}
+    L ${q1},${wB-jH}
+    L ${cx},${wT+jH} L ${cx},${wT}
+    L ${cx},${wT+jH}
+    L ${q3},${wB-jH} L ${q3},${wB}
+    L ${q3},${wB-jH}
+    L ${R},${wT+jH} L ${R},${wT}
+  " fill="none" stroke="${g}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+  // Light highlight
+  s += `<path d="
+    M ${L+0.8},${wT} L ${L+0.8},${wT+jH}
+    L ${q1+0.5},${wB-jH} L ${q1+0.5},${wB}
+  " fill="none" stroke="${gl}" stroke-width="0.8" opacity="0.3" stroke-linecap="round"/>`;
+
+  // M shape (bottom half) - mirror
+  const mT = 32, mB = 55;
+  s += `<path d="
+    M ${L},${mB} L ${L},${mB-jH}
+    L ${q1},${mT+jH} L ${q1},${mT}
+    L ${q1},${mT+jH}
+    L ${cx},${mB-jH} L ${cx},${mB}
+    L ${cx},${mB-jH}
+    L ${q3},${mT+jH} L ${q3},${mT}
+    L ${q3},${mT+jH}
+    L ${R},${mB-jH} L ${R},${mB}
+  " fill="none" stroke="${g}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+  // Light highlight
+  s += `<path d="
+    M ${L+0.8},${mB} L ${L+0.8},${mB-jH}
+    L ${q1+0.5},${mT+jH} L ${q1+0.5},${mT}
+  " fill="none" stroke="${gl}" stroke-width="0.8" opacity="0.3" stroke-linecap="round"/>`;
+
+  return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+
+// --- 字牌: Honor tiles ---
+function renderHonorSVG(t) {
+  const idx = t - 27;
+  const ch = HONOR_CHARS[idx];
+
+  if (idx === 6) {
+    // 白 - white dragon: empty rectangle frame
+    return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="12" width="24" height="34" rx="2" fill="none"
+        stroke="#1565C0" stroke-width="2.5"/>
+      <rect x="12" y="16" width="16" height="26" rx="1" fill="none"
+        stroke="#1565C0" stroke-width="1.2"/>
+    </svg>`;
+  }
+
+  let color;
+  if (idx === 4) color = '#C62828'; // 中 red
+  else if (idx === 5) color = '#2E7D32'; // 發 green
+  else color = '#1a1a1a'; // winds black
+
+  return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="32" text-anchor="middle" dominant-baseline="central"
+      font-size="32" font-weight="900" fill="${color}"
+      font-family="Songti SC,STSong,SimSun,KaiTi,serif">${ch}</text>
+  </svg>`;
 }
 
 // ===== Shanten Calculator =====
 function calcShanten(tiles) {
-  return Math.min(
-    calcShantenRegular(tiles),
-    calcShantenChiitoi(tiles),
-    calcShantenKokushi(tiles)
-  );
+  return Math.min(calcShantenRegular(tiles), calcShantenChiitoi(tiles), calcShantenKokushi(tiles));
 }
 
 function calcShantenChiitoi(tiles) {
@@ -309,8 +468,7 @@ function calcShantenChiitoi(tiles) {
     if (tiles[i] >= 1) kinds++;
     if (tiles[i] >= 2) pairs++;
   }
-  // Need 7 different pairs
-  if (kinds < 7) return 13; // not viable
+  if (kinds < 7) return 13;
   return 6 - pairs;
 }
 
@@ -326,9 +484,7 @@ function calcShantenKokushi(tiles) {
 
 function calcShantenRegular(tiles) {
   let best = 8;
-  // Without jantai
   best = Math.min(best, searchMentsu(tiles, 0, 0, 0, false));
-  // With jantai
   for (let i = 0; i < 34; i++) {
     if (tiles[i] >= 2) {
       tiles[i] -= 2;
@@ -345,49 +501,33 @@ function searchMentsu(tiles, pos, mentsu, taatsu, hasJantai) {
     const t = Math.min(taatsu, 4 - mentsu);
     return 8 - 2 * mentsu - t - (hasJantai ? 1 : 0);
   }
-
   let best = 8;
-  const suitStart = pos < 27 ? Math.floor(pos / 9) * 9 : -1;
-  const posInSuit = pos < 27 ? pos % 9 : -1;
-
-  // Kotsu
   if (tiles[pos] >= 3) {
     tiles[pos] -= 3;
     best = Math.min(best, searchMentsu(tiles, pos, mentsu + 1, taatsu, hasJantai));
     tiles[pos] += 3;
   }
-
-  // Shuntsu
-  if (pos < 27 && posInSuit <= 6 && tiles[pos+1] >= 1 && tiles[pos+2] >= 1) {
+  if (pos < 27 && (pos % 9) <= 6 && tiles[pos+1] >= 1 && tiles[pos+2] >= 1) {
     tiles[pos]--; tiles[pos+1]--; tiles[pos+2]--;
     best = Math.min(best, searchMentsu(tiles, pos, mentsu + 1, taatsu, hasJantai));
     tiles[pos]++; tiles[pos+1]++; tiles[pos+2]++;
   }
-
-  // Pair (as taatsu)
   if (tiles[pos] >= 2) {
     tiles[pos] -= 2;
     best = Math.min(best, searchMentsu(tiles, pos, mentsu, taatsu + 1, hasJantai));
     tiles[pos] += 2;
   }
-
-  // Consecutive partial
-  if (pos < 27 && posInSuit <= 7 && tiles[pos+1] >= 1) {
+  if (pos < 27 && (pos % 9) <= 7 && tiles[pos+1] >= 1) {
     tiles[pos]--; tiles[pos+1]--;
     best = Math.min(best, searchMentsu(tiles, pos, mentsu, taatsu + 1, hasJantai));
     tiles[pos]++; tiles[pos+1]++;
   }
-
-  // Skip-one partial
-  if (pos < 27 && posInSuit <= 6 && tiles[pos+2] >= 1) {
+  if (pos < 27 && (pos % 9) <= 6 && tiles[pos+2] >= 1) {
     tiles[pos]--; tiles[pos+2]--;
     best = Math.min(best, searchMentsu(tiles, pos, mentsu, taatsu + 1, hasJantai));
     tiles[pos]++; tiles[pos+2]++;
   }
-
-  // Skip tile
   best = Math.min(best, searchMentsu(tiles, pos + 1, mentsu, taatsu, hasJantai));
-
   return best;
 }
 
@@ -396,12 +536,10 @@ function countOuts(handCounts, wallCounts) {
   const currentShanten = calcShanten(handCounts);
   let outs = 0;
   const outTiles = [];
-
   for (let i = 0; i < 34; i++) {
     if (wallCounts[i] > 0) {
       handCounts[i]++;
-      const s = calcShanten(handCounts);
-      if (s < currentShanten) {
+      if (calcShanten(handCounts) < currentShanten) {
         outs += wallCounts[i];
         outTiles.push({ tile: i, count: wallCounts[i] });
       }
@@ -411,29 +549,21 @@ function countOuts(handCounts, wallCounts) {
   return { outs, outTiles, shanten: currentShanten };
 }
 
-// ===== Evaluate All Discards =====
 function evaluateAllDiscards(hand14) {
   const handCounts = new Array(34).fill(0);
   for (const t of hand14) handCounts[t]++;
-
   const wallCounts = new Array(34).fill(4);
   for (let i = 0; i < 34; i++) wallCounts[i] -= handCounts[i];
-
   const results = [];
   const seen = new Set();
-
   for (const tile of hand14) {
     if (seen.has(tile)) continue;
     seen.add(tile);
-
-    handCounts[tile]--;
-    wallCounts[tile]++;
+    handCounts[tile]--; wallCounts[tile]++;
     const r = countOuts(handCounts, wallCounts);
     results.push({ tile, outs: r.outs, outTiles: r.outTiles, shanten: r.shanten });
-    handCounts[tile]++;
-    wallCounts[tile]--;
+    handCounts[tile]++; wallCounts[tile]--;
   }
-
   results.sort((a, b) => a.shanten !== b.shanten ? a.shanten - b.shanten : b.outs - a.outs);
   return results;
 }
@@ -447,127 +577,139 @@ function shuffle(arr) {
   return arr;
 }
 
-// Build a winning hand (4 mentsu + 1 pair), then break it slightly
 function buildWinningHand() {
   for (let attempt = 0; attempt < 50; attempt++) {
     const counts = new Array(34).fill(0);
     let ok = true;
-
     for (let m = 0; m < 4 && ok; m++) {
       if (Math.random() < 0.65) {
-        // Sequence
         const suit = Math.floor(Math.random() * 3);
         const start = Math.floor(Math.random() * 7);
         const base = suit * 9 + start;
         if (counts[base] < 4 && counts[base+1] < 4 && counts[base+2] < 4) {
           counts[base]++; counts[base+1]++; counts[base+2]++;
-        } else { ok = false; }
+        } else ok = false;
       } else {
-        // Triplet
         const tile = Math.floor(Math.random() * 34);
-        if (counts[tile] + 3 <= 4) {
-          counts[tile] += 3;
-        } else { ok = false; }
+        if (counts[tile] + 3 <= 4) counts[tile] += 3;
+        else ok = false;
       }
     }
     if (!ok) continue;
-
-    // Pair
     const candidates = [];
-    for (let i = 0; i < 34; i++) {
-      if (counts[i] + 2 <= 4) candidates.push(i);
-    }
+    for (let i = 0; i < 34; i++) if (counts[i] + 2 <= 4) candidates.push(i);
     if (candidates.length === 0) continue;
     counts[candidates[Math.floor(Math.random() * candidates.length)]] += 2;
-
-    const total = counts.reduce((a, b) => a + b, 0);
-    if (total !== 14) continue;
-
+    if (counts.reduce((a, b) => a + b, 0) !== 14) continue;
     const hand = [];
-    for (let i = 0; i < 34; i++)
-      for (let j = 0; j < counts[i]; j++) hand.push(i);
+    for (let i = 0; i < 34; i++) for (let j = 0; j < counts[i]; j++) hand.push(i);
     return hand;
   }
   return null;
 }
 
-function generateHand() {
-  // Strategy: start from a winning hand and replace 1-3 tiles to create shanten 1-2
-  for (let attempt = 0; attempt < 300; attempt++) {
-    let hand;
+function replaceInHand(hand, numReplace) {
+  const handCounts = new Array(34).fill(0);
+  for (const t of hand) handCounts[t]++;
+  const remaining = [];
+  for (let i = 0; i < 34; i++) for (let j = handCounts[i]; j < 4; j++) remaining.push(i);
+  shuffle(remaining);
+  const indices = [...Array(14).keys()];
+  shuffle(indices);
+  let replaced = 0;
+  for (let i = 0; i < numReplace && replaced < remaining.length; i++) {
+    const idx = indices[i];
+    const oldTile = hand[idx];
+    const newTile = remaining[replaced];
+    if (newTile === oldTile) { replaced++; continue; }
+    hand[idx] = newTile;
+    const check = new Array(34).fill(0);
+    for (const t of hand) check[t]++;
+    if (check[newTile] > 4) hand[idx] = oldTile;
+    replaced++;
+  }
+}
 
-    if (attempt < 200) {
-      // Build from winning hand, break it
+function generateHandLevel1() {
+  for (let attempt = 0; attempt < 500; attempt++) {
+    let hand;
+    if (attempt < 350) {
       const winning = buildWinningHand();
       if (!winning) continue;
       hand = [...winning];
-
-      const numReplace = 1 + Math.floor(Math.random() * 3); // 1-3 replacements
-      const handCounts = new Array(34).fill(0);
-      for (const t of hand) handCounts[t]++;
-
-      const remaining = [];
-      for (let i = 0; i < 34; i++)
-        for (let j = handCounts[i]; j < 4; j++) remaining.push(i);
-      shuffle(remaining);
-
-      const indices = [...Array(14).keys()];
-      shuffle(indices);
-
-      let replaced = 0;
-      for (let i = 0; i < numReplace && replaced < remaining.length; i++) {
-        const idx = indices[i];
-        const oldTile = hand[idx];
-        const newTile = remaining[replaced];
-        if (newTile === oldTile) { replaced++; continue; }
-        hand[idx] = newTile;
-        // Verify no tile exceeds 4
-        const check = new Array(34).fill(0);
-        for (const t of hand) check[t]++;
-        if (check[newTile] > 4) { hand[idx] = oldTile; }
-        replaced++;
-      }
+      replaceInHand(hand, 1 + Math.floor(Math.random() * 2));
     } else {
-      // Fallback: pure random
       const deck = [];
-      for (let i = 0; i < 34; i++)
-        for (let j = 0; j < 4; j++) deck.push(i);
-      shuffle(deck);
-      hand = deck.slice(0, 14);
+      for (let i = 0; i < 34; i++) for (let j = 0; j < 4; j++) deck.push(i);
+      shuffle(deck); hand = deck.slice(0, 14);
     }
-
     hand.sort((a, b) => a - b);
-
     const counts = new Array(34).fill(0);
     for (const t of hand) counts[t]++;
     const sh = calcShanten(counts);
-    if (sh <= -1 || sh > 2) continue; // Only shanten 0-2
-
+    if (sh < 0 || sh > 2) continue;
     const results = evaluateAllDiscards(hand);
-    if (results.length < 2) continue;
-    if (results[0].outs === 0) continue;
-    // Best must be strictly better than second best
-    if (results[0].shanten === results[1].shanten && results[0].outs === results[1].outs) continue;
-
+    if (results.length < 2 || results[0].outs === 0) continue;
+    const outsDiff = results[0].outs - results[1].outs;
+    const shantenDiff = results[1].shanten - results[0].shanten;
+    if (shantenDiff === 0 && outsDiff < 4) continue;
+    if (shantenDiff === 0 && outsDiff === 0) continue;
     return { hand, results };
   }
+  return generateHandFallback();
+}
 
-  // Emergency fallback
+function generateHandLevel2() {
+  for (let attempt = 0; attempt < 800; attempt++) {
+    let hand;
+    if (attempt < 600) {
+      const winning = buildWinningHand();
+      if (!winning) continue;
+      hand = [...winning];
+      replaceInHand(hand, 1 + Math.floor(Math.random() * 2));
+    } else {
+      const deck = [];
+      for (let i = 0; i < 34; i++) for (let j = 0; j < 4; j++) deck.push(i);
+      shuffle(deck); hand = deck.slice(0, 14);
+    }
+    hand.sort((a, b) => a - b);
+    const counts = new Array(34).fill(0);
+    for (const t of hand) counts[t]++;
+    const sh = calcShanten(counts);
+    if (sh < 0 || sh > 1) continue;
+    const results = evaluateAllDiscards(hand);
+    if (results.length < 3 || results[0].outs === 0) continue;
+    const outsDiff = results[0].outs - results[1].outs;
+    const shantenDiff = results[1].shanten - results[0].shanten;
+    if (shantenDiff === 0 && outsDiff === 0) continue;
+    if (shantenDiff === 0 && outsDiff > 6) continue;
+    const sameShantenCount = results.filter(r => r.shanten === results[0].shanten).length;
+    if (sameShantenCount < 3) continue;
+    const suits = new Set();
+    for (const t of hand) { if (t < 27) suits.add(Math.floor(t / 9)); else suits.add(3); }
+    if (suits.size < 2) continue;
+    return { hand, results };
+  }
+  return generateHandFallback();
+}
+
+function generateHandFallback() {
   const deck = [];
-  for (let i = 0; i < 34; i++)
-    for (let j = 0; j < 4; j++) deck.push(i);
+  for (let i = 0; i < 34; i++) for (let j = 0; j < 4; j++) deck.push(i);
   shuffle(deck);
   const hand = deck.slice(0, 14).sort((a, b) => a - b);
   return { hand, results: evaluateAllDiscards(hand) };
 }
 
+function generateHand() {
+  return state.level === 2 ? generateHandLevel2() : generateHandLevel1();
+}
+
 // ===== Explanation Generator =====
 function analyzeTile(tile, handCounts) {
   const info = { isolated: true, pair: false, triplet: false, leftAdj: false, rightAdj: false, leftSkip: false, rightSkip: false, twoSided: false };
-  const count = handCounts[tile];
-  if (count >= 2) { info.pair = true; info.isolated = false; }
-  if (count >= 3) { info.triplet = true; }
-
+  if (handCounts[tile] >= 2) { info.pair = true; info.isolated = false; }
+  if (handCounts[tile] >= 3) info.triplet = true;
   if (tile < 27) {
     const num = tile % 9;
     if (num > 0 && handCounts[tile-1] > 0) { info.leftAdj = true; info.isolated = false; }
@@ -583,90 +725,69 @@ function analyzeTile(tile, handCounts) {
 
 function generateExplanation(userTile, optimalTile, userResult, optimalResult, handCounts) {
   if (userTile === optimalTile) {
-    return {
-      text: `你打出的 ${tileToString(userTile)} 就是最优选择！最大进张数 ${optimalResult.outs} 张。`,
-      tip: '继续保持！你对牌效率的判断很准确。'
-    };
+    return { text: `你打出的 ${tileToString(userTile)} 就是最优选择！最大进张数 ${optimalResult.outs} 张。`, tip: '继续保持！你对牌效率的判断很准确。' };
   }
-
   const uInfo = analyzeTile(userTile, handCounts);
   const oInfo = analyzeTile(optimalTile, handCounts);
-
-  let text = `你打出了 ${tileToString(userTile)}（${userResult.outs} 张进张），`;
-  text += `但最优选择是打 ${tileToString(optimalTile)}（${optimalResult.outs} 张进张）。`;
-
+  let text = `你打出了 ${tileToString(userTile)}（${userResult.outs} 张进张），但最优选择是打 ${tileToString(optimalTile)}（${optimalResult.outs} 张进张）。`;
   const reasons = [];
-  if (oInfo.isolated) {
-    reasons.push(`${tileToString(optimalTile)} 是孤张，没有有效关联，打出后能保留所有有价值的搭子结构`);
-  } else if (oInfo.pair && !oInfo.leftAdj && !oInfo.rightAdj) {
-    reasons.push(`${tileToString(optimalTile)} 只是一个对子且没有顺子潜力，效率低于其他搭子`);
-  }
-
-  if (uInfo.twoSided || (uInfo.leftAdj && uInfo.rightAdj)) {
-    reasons.push(`${tileToString(userTile)} 属于两面搭子结构，能接受更多进张`);
-  } else if (uInfo.leftAdj || uInfo.rightAdj) {
-    reasons.push(`${tileToString(userTile)} 与相邻牌形成了有用的搭子，不宜拆掉`);
-  } else if (uInfo.pair) {
-    reasons.push(`${tileToString(userTile)} 有对子，可能变成刻子或作为和牌的将牌`);
-  }
-
-  if (reasons.length > 0) {
-    text += reasons.join('；') + '。';
-  } else {
-    text += `打 ${tileToString(optimalTile)} 能留下更多改善手牌的机会。`;
-  }
-
-  if (userResult.shanten > optimalResult.shanten) {
-    text += ` 此外，你的选择让手牌多了 ${userResult.shanten - optimalResult.shanten} 步才能听牌。`;
-  }
-
+  if (oInfo.isolated) reasons.push(`${tileToString(optimalTile)} 是孤张，没有有效关联，打出后能保留所有有价值的搭子结构`);
+  else if (oInfo.pair && !oInfo.leftAdj && !oInfo.rightAdj) reasons.push(`${tileToString(optimalTile)} 只是一个对子且没有顺子潜力，效率低于其他搭子`);
+  if (uInfo.twoSided || (uInfo.leftAdj && uInfo.rightAdj)) reasons.push(`${tileToString(userTile)} 属于两面搭子结构，能接受更多进张`);
+  else if (uInfo.leftAdj || uInfo.rightAdj) reasons.push(`${tileToString(userTile)} 与相邻牌形成了有用的搭子，不宜拆掉`);
+  else if (uInfo.pair) reasons.push(`${tileToString(userTile)} 有对子，可能变成刻子或作为和牌的将牌`);
+  text += reasons.length > 0 ? reasons.join('；') + '。' : `打 ${tileToString(optimalTile)} 能留下更多改善手牌的机会。`;
+  if (userResult.shanten > optimalResult.shanten) text += ` 此外，你的选择让手牌多了 ${userResult.shanten - optimalResult.shanten} 步才能听牌。`;
   let tip;
-  if (oInfo.isolated && !uInfo.isolated) {
-    tip = '提示：优先打出孤张（没有相邻或相同的牌），保留有关联的搭子结构。';
-  } else if (uInfo.twoSided) {
-    tip = '提示：两面搭子（如56等4或7）能接受更多进张，应该保留！';
-  } else if (uInfo.leftAdj || uInfo.rightAdj) {
-    tip = '提示：连续的牌更容易组成顺子，避免拆掉连续结构。';
-  } else if (userResult.shanten > optimalResult.shanten) {
-    tip = '提示：始终考虑哪张出牌能让手牌最接近听牌（最低向听数）。';
+  if (state.level === 2) {
+    if (oInfo.isolated && !uInfo.isolated) tip = '进阶提示：在听牌阶段，选择打出哪张孤张要考虑剩余进张数量，而不仅仅是"打孤张"。';
+    else if (userResult.shanten === optimalResult.shanten) tip = `进阶提示：两种打法向听数相同，但进张差 ${optimalResult.outs - userResult.outs} 张。需要仔细数每种打法的有效进张来区分。`;
+    else tip = '进阶提示：注意搭子的质量差异——两面听 > 嵌张听 > 边张听。好的搭子值得保留。';
   } else {
-    tip = '提示：数一数每种出牌的进张数，进张最多的通常就是最优选择。';
+    if (oInfo.isolated && !uInfo.isolated) tip = '提示：优先打出孤张（没有相邻或相同的牌），保留有关联的搭子结构。';
+    else if (uInfo.twoSided) tip = '提示：两面搭子（如56等4或7）能接受更多进张，应该保留！';
+    else if (uInfo.leftAdj || uInfo.rightAdj) tip = '提示：连续的牌更容易组成顺子，避免拆掉连续结构。';
+    else if (userResult.shanten > optimalResult.shanten) tip = '提示：始终考虑哪张出牌能让手牌最接近听牌（最低向听数）。';
+    else tip = '提示：数一数每种出牌的进张数，进张最多的通常就是最优选择。';
   }
-
   return { text, tip };
 }
 
 // ===== Game State =====
-let state = {
-  round: 1,
-  totalRounds: 0,
-  totalScore: 0,
-  hand: null,
-  results: null,
-  chosen: false
-};
+let state = { round: 1, totalRounds: 0, totalScore: 0, hand: null, results: null, chosen: false, level: 1 };
 
 // ===== UI =====
 const handEl = document.getElementById('hand');
 const feedbackEl = document.getElementById('feedback');
 const btnNext = document.getElementById('btn-next');
 const btnRestart = document.getElementById('btn-restart');
+const levelDisplay = document.getElementById('level-display');
+
+document.querySelectorAll('.level-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const newLevel = parseInt(btn.dataset.level);
+    if (newLevel === state.level) return;
+    state.level = newLevel;
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    levelDisplay.textContent = newLevel === 1 ? '基础' : '进阶';
+    restart();
+  });
+});
 
 function updateStats() {
   document.getElementById('round').textContent = state.round;
   document.getElementById('total-rounds').textContent = state.totalRounds;
-  document.getElementById('avg-score').textContent =
-    state.totalRounds > 0 ? Math.round(state.totalScore / state.totalRounds) : '-';
+  document.getElementById('avg-score').textContent = state.totalRounds > 0 ? Math.round(state.totalScore / state.totalRounds) : '-';
 }
 
 function renderHand() {
   handEl.innerHTML = '';
   state.hand.forEach((tile, idx) => {
-    const info = tileDisplayInfo(tile);
     const el = document.createElement('div');
-    el.className = `tile ${info.cls}`;
+    el.className = 'tile';
     el.dataset.idx = idx;
-    el.innerHTML = `<span class="num">${info.num}</span><span class="suit">${info.suit}</span>`;
+    el.innerHTML = renderTileSVG(tile);
     el.addEventListener('click', () => onTileClick(idx));
     handEl.appendChild(el);
   });
@@ -675,124 +796,46 @@ function renderHand() {
 function onTileClick(idx) {
   if (state.chosen) return;
   state.chosen = true;
-
   const userTile = state.hand[idx];
   const results = state.results;
   const optimal = results[0];
   const userResult = results.find(r => r.tile === userTile) || results[results.length - 1];
-
-  // Calculate score
   let score;
-  if (userResult.shanten > optimal.shanten) {
-    // Higher shanten = further from winning, heavy penalty
-    score = Math.max(0, 50 - (userResult.shanten - optimal.shanten) * 25);
-  } else if (optimal.outs === 0) {
-    score = 100;
-  } else {
-    score = Math.min(100, Math.round((userResult.outs / optimal.outs) * 100));
-  }
-
-  state.totalRounds++;
-  state.totalScore += score;
-  updateStats();
-
-  // Highlight tiles
+  if (userResult.shanten > optimal.shanten) score = Math.max(0, 50 - (userResult.shanten - optimal.shanten) * 25);
+  else if (optimal.outs === 0) score = 100;
+  else score = Math.min(100, Math.round((userResult.outs / optimal.outs) * 100));
+  state.totalRounds++; state.totalScore += score; updateStats();
   const tiles = handEl.querySelectorAll('.tile');
   tiles.forEach(t => t.classList.add('disabled'));
   tiles[idx].classList.add('selected');
-
-  // Highlight optimal if different
-  if (userTile !== optimal.tile) {
-    state.hand.forEach((t, i) => {
-      if (t === optimal.tile) tiles[i].classList.add('optimal');
-    });
-  }
-
-  // Build hand counts for explanation
+  if (userTile !== optimal.tile) state.hand.forEach((t, i) => { if (t === optimal.tile) tiles[i].classList.add('optimal'); });
   const handCounts = new Array(34).fill(0);
   for (const t of state.hand) handCounts[t]++;
-
   const expl = generateExplanation(userTile, optimal.tile, userResult, optimal, handCounts);
   const isCorrect = userTile === optimal.tile;
-
-  // Render feedback
-  let html = `<div class="feedback-header ${isCorrect ? 'correct' : 'wrong'}">
-    ${isCorrect ? '最优选择！' : '不是最优'}
-  </div>`;
-
-  html += `<div class="comparison">
-    <div class="comp-box">
-      <div class="comp-label">你的出牌</div>
-      <div class="comp-tile">${tileToString(userTile)}</div>
-      <div class="comp-outs">${userResult.outs}</div>
-      <div class="comp-outs-label">进张（向听 ${userResult.shanten}）</div>
-    </div>
-    <div class="comp-box">
-      <div class="comp-label">最优出牌</div>
-      <div class="comp-tile" style="color:#44dd44">${tileToString(optimal.tile)}</div>
-      <div class="comp-outs">${optimal.outs}</div>
-      <div class="comp-outs-label">进张（向听 ${optimal.shanten}）</div>
-    </div>
-  </div>`;
-
-  html += `<div class="explanation">${expl.text}</div>`;
-  html += `<div class="tip">${expl.tip}</div>`;
-
-  // Score
+  const lvBadge = state.level === 1 ? '<span class="level-badge lv1">基础</span>' : '<span class="level-badge lv2">进阶</span>';
+  let html = `<div class="feedback-header ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '最优选择！' : '不是最优'} ${lvBadge}</div>`;
+  html += `<div class="comparison"><div class="comp-box"><div class="comp-label">你的出牌</div><div class="comp-tile">${tileToString(userTile)}</div><div class="comp-outs">${userResult.outs}</div><div class="comp-outs-label">进张（向听 ${userResult.shanten}）</div></div><div class="comp-box"><div class="comp-label">最优出牌</div><div class="comp-tile" style="color:#44dd44">${tileToString(optimal.tile)}</div><div class="comp-outs">${optimal.outs}</div><div class="comp-outs-label">进张（向听 ${optimal.shanten}）</div></div></div>`;
+  html += `<div class="explanation">${expl.text}</div><div class="tip">${expl.tip}</div>`;
   html += `<div class="score-display">得分：<span class="score-val">${score}</span></div>`;
-
-  // Outs detail (collapsible)
-  html += `<div class="outs-detail"><details><summary>最优进张详情</summary>`;
-  html += optimal.outTiles.map(o => `${tileToString(o.tile)} x${o.count}`).join(', ');
-  html += `</details></div>`;
-
-  if (!isCorrect && userResult.outTiles.length > 0) {
-    html += `<div class="outs-detail"><details><summary>你的出牌进张详情</summary>`;
-    html += userResult.outTiles.map(o => `${tileToString(o.tile)} x${o.count}`).join(', ');
-    html += `</details></div>`;
-  }
-
-  feedbackEl.innerHTML = html;
-  feedbackEl.classList.add('show');
-  btnNext.disabled = false;
+  html += `<div class="outs-detail"><details><summary>最优进张详情</summary>${optimal.outTiles.map(o => `${tileToString(o.tile)} x${o.count}`).join(', ')}</details></div>`;
+  if (!isCorrect && userResult.outTiles.length > 0) html += `<div class="outs-detail"><details><summary>你的出牌进张详情</summary>${userResult.outTiles.map(o => `${tileToString(o.tile)} x${o.count}`).join(', ')}</details></div>`;
+  feedbackEl.innerHTML = html; feedbackEl.classList.add('show'); btnNext.disabled = false;
 }
 
 function startNewRound() {
-  state.chosen = false;
-  feedbackEl.classList.remove('show');
-  feedbackEl.innerHTML = '';
-  btnNext.disabled = true;
-
+  state.chosen = false; feedbackEl.classList.remove('show'); feedbackEl.innerHTML = ''; btnNext.disabled = true;
   handEl.innerHTML = '<div class="loading">正在生成手牌...</div>';
-
-  // Use setTimeout to allow UI update before heavy computation
-  setTimeout(() => {
-    const { hand, results } = generateHand();
-    state.hand = hand;
-    state.results = results;
-    renderHand();
-  }, 10);
+  setTimeout(() => { const { hand, results } = generateHand(); state.hand = hand; state.results = results; renderHand(); }, 10);
 }
 
 function restart() {
-  state.round = 1;
-  state.totalRounds = 0;
-  state.totalScore = 0;
-  updateStats();
-  startNewRound();
+  state.round = 1; state.totalRounds = 0; state.totalScore = 0; updateStats(); startNewRound();
 }
 
-btnNext.addEventListener('click', () => {
-  state.round++;
-  updateStats();
-  startNewRound();
-});
-
+btnNext.addEventListener('click', () => { state.round++; updateStats(); startNewRound(); });
 btnRestart.addEventListener('click', restart);
-
-// Init
-updateStats();
-startNewRound();
+updateStats(); startNewRound();
 </script>
 </body>
 </html>
