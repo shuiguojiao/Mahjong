@@ -137,6 +137,7 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; letter-spacing: 
 }
 .level-badge.lv1 { background: rgba(74,222,128,0.2); color: #4ade80; }
 .level-badge.lv2 { background: rgba(251,146,60,0.2); color: #fb923c; }
+.level-badge.lv3 { background: rgba(239,68,68,0.2); color: #ef4444; }
 
 @media (max-width: 500px) {
   body { padding: 10px 6px; justify-content: flex-start; }
@@ -172,6 +173,7 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; letter-spacing: 
 <div class="level-selector">
   <button class="level-btn active" data-level="1">基础</button>
   <button class="level-btn" data-level="2">进阶</button>
+  <button class="level-btn" data-level="3">精通</button>
 </div>
 
 <div class="stats">
@@ -374,59 +376,15 @@ function renderSou7SVG() {
   return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
 }
 
-// 8条: Outlined W (top) + M (bottom) with vertical joints at turning points
+// 8条: 2 columns x 4 rows of bamboo sticks
 function renderSou8SVG() {
-  const g = '#2E7D32', gl = '#4CAF50';
-  // W shape: continuous outlined path with vertical segments at peaks/valleys
-  // 5 turning points: top-left, bottom-q1, top-center, bottom-q3, top-right
-  const L = 8, R = 32, cx = 20;
-  const q1 = L + (R-L)*0.25, q3 = L + (R-L)*0.75;
-  // W top half
-  const wT = 3, wB = 26, jH = 4; // joint height at each turn
-  // Path: down from top-left, diagonal to valley, up at valley, diagonal to peak...
-  // Draw as outlined shape (two parallel paths offset)
-  const hw = 2; // half-width of the outlined stroke
-
+  const cx = 20, cy = 29, gap = 8, h = 9, vgap = 3;
   let s = '';
-  // Draw W as a thick path with stroke
-  // W zigzag: peaks at (L, wT), (cx, wT), (R, wT); valleys at (q1, wB), (q3, wB)
-  // Each peak/valley has a short vertical segment (joint)
-  s += `<path d="
-    M ${L},${wT} L ${L},${wT+jH}
-    L ${q1},${wB-jH} L ${q1},${wB}
-    L ${q1},${wB-jH}
-    L ${cx},${wT+jH} L ${cx},${wT}
-    L ${cx},${wT+jH}
-    L ${q3},${wB-jH} L ${q3},${wB}
-    L ${q3},${wB-jH}
-    L ${R},${wT+jH} L ${R},${wT}
-  " fill="none" stroke="${g}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
-
-  // Light highlight
-  s += `<path d="
-    M ${L+0.8},${wT} L ${L+0.8},${wT+jH}
-    L ${q1+0.5},${wB-jH} L ${q1+0.5},${wB}
-  " fill="none" stroke="${gl}" stroke-width="0.8" opacity="0.3" stroke-linecap="round"/>`;
-
-  // M shape (bottom half) - mirror
-  const mT = 32, mB = 55;
-  s += `<path d="
-    M ${L},${mB} L ${L},${mB-jH}
-    L ${q1},${mT+jH} L ${q1},${mT}
-    L ${q1},${mT+jH}
-    L ${cx},${mB-jH} L ${cx},${mB}
-    L ${cx},${mB-jH}
-    L ${q3},${mT+jH} L ${q3},${mT}
-    L ${q3},${mT+jH}
-    L ${R},${mB-jH} L ${R},${mB}
-  " fill="none" stroke="${g}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
-
-  // Light highlight
-  s += `<path d="
-    M ${L+0.8},${mB} L ${L+0.8},${mB-jH}
-    L ${q1+0.5},${mT+jH} L ${q1+0.5},${mT}
-  " fill="none" stroke="${gl}" stroke-width="0.8" opacity="0.3" stroke-linecap="round"/>`;
-
+  for (let row = 0; row < 4; row++) {
+    const y = cy - 1.5 * (h + vgap) + row * (h + vgap);
+    s += bambooStick(cx - gap / 2, y, h, 'green');
+    s += bambooStick(cx + gap / 2, y, h, 'green');
+  }
   return `<svg viewBox="0 0 40 58" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
 }
 
@@ -693,6 +651,40 @@ function generateHandLevel2() {
   return generateHandFallback();
 }
 
+function generateHandLevel3() {
+  for (let attempt = 0; attempt < 1200; attempt++) {
+    let hand;
+    if (attempt < 900) {
+      const winning = buildWinningHand();
+      if (!winning) continue;
+      hand = [...winning];
+      replaceInHand(hand, 1);
+    } else {
+      const deck = [];
+      for (let i = 0; i < 34; i++) for (let j = 0; j < 4; j++) deck.push(i);
+      shuffle(deck); hand = deck.slice(0, 14);
+    }
+    hand.sort((a, b) => a - b);
+    const counts = new Array(34).fill(0);
+    for (const t of hand) counts[t]++;
+    const sh = calcShanten(counts);
+    if (sh !== 0) continue;
+    const results = evaluateAllDiscards(hand);
+    if (results.length < 4 || results[0].outs === 0) continue;
+    const outsDiff = results[0].outs - results[1].outs;
+    const shantenDiff = results[1].shanten - results[0].shanten;
+    if (shantenDiff === 0 && outsDiff === 0) continue;
+    if (shantenDiff === 0 && outsDiff > 3) continue;
+    const sameShantenCount = results.filter(r => r.shanten === results[0].shanten).length;
+    if (sameShantenCount < 4) continue;
+    const suits = new Set();
+    for (const t of hand) { if (t < 27) suits.add(Math.floor(t / 9)); else suits.add(3); }
+    if (suits.size < 3) continue;
+    return { hand, results };
+  }
+  return generateHandFallback();
+}
+
 function generateHandFallback() {
   const deck = [];
   for (let i = 0; i < 34; i++) for (let j = 0; j < 4; j++) deck.push(i);
@@ -702,7 +694,7 @@ function generateHandFallback() {
 }
 
 function generateHand() {
-  return state.level === 2 ? generateHandLevel2() : generateHandLevel1();
+  return state.level === 3 ? generateHandLevel3() : state.level === 2 ? generateHandLevel2() : generateHandLevel1();
 }
 
 // ===== Explanation Generator =====
@@ -739,7 +731,16 @@ function generateExplanation(userTile, optimalTile, userResult, optimalResult, h
   text += reasons.length > 0 ? reasons.join('；') + '。' : `打 ${tileToString(optimalTile)} 能留下更多改善手牌的机会。`;
   if (userResult.shanten > optimalResult.shanten) text += ` 此外，你的选择让手牌多了 ${userResult.shanten - optimalResult.shanten} 步才能听牌。`;
   let tip;
-  if (state.level === 2) {
+  if (state.level === 3) {
+    if (userResult.shanten === optimalResult.shanten && optimalResult.outs - userResult.outs <= 2)
+      tip = `精通提示：进张仅差 ${optimalResult.outs - userResult.outs} 张，需要逐一清点每种打法对应的所有有效牌，精确比较。`;
+    else if (oInfo.isolated && uInfo.isolated)
+      tip = '精通提示：两张都是孤张时，要综合考虑：哪张打出后剩余的搭子质量更高？听牌时是好形（两面）还是愚形（嵌张/边张）？';
+    else if (userResult.shanten === optimalResult.shanten)
+      tip = `精通提示：向听数相同时，不仅要比较进张数量（差${optimalResult.outs - userResult.outs}张），还要关注进张后的手牌形状——好形听牌的价值远高于愚形。`;
+    else
+      tip = '精通提示：高手的差距在于"一张之差"的判断——每种打法的有效进张、听牌形状、剩余枚数都要纳入考量。';
+  } else if (state.level === 2) {
     if (oInfo.isolated && !uInfo.isolated) tip = '进阶提示：在听牌阶段，选择打出哪张孤张要考虑剩余进张数量，而不仅仅是"打孤张"。';
     else if (userResult.shanten === optimalResult.shanten) tip = `进阶提示：两种打法向听数相同，但进张差 ${optimalResult.outs - userResult.outs} 张。需要仔细数每种打法的有效进张来区分。`;
     else tip = '进阶提示：注意搭子的质量差异——两面听 > 嵌张听 > 边张听。好的搭子值得保留。';
@@ -770,7 +771,7 @@ document.querySelectorAll('.level-btn').forEach(btn => {
     state.level = newLevel;
     document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    levelDisplay.textContent = newLevel === 1 ? '基础' : '进阶';
+    levelDisplay.textContent = newLevel === 1 ? '基础' : newLevel === 2 ? '进阶' : '精通';
     restart();
   });
 });
@@ -813,7 +814,7 @@ function onTileClick(idx) {
   for (const t of state.hand) handCounts[t]++;
   const expl = generateExplanation(userTile, optimal.tile, userResult, optimal, handCounts);
   const isCorrect = userTile === optimal.tile;
-  const lvBadge = state.level === 1 ? '<span class="level-badge lv1">基础</span>' : '<span class="level-badge lv2">进阶</span>';
+  const lvBadge = state.level === 1 ? '<span class="level-badge lv1">基础</span>' : state.level === 2 ? '<span class="level-badge lv2">进阶</span>' : '<span class="level-badge lv3">精通</span>';
   let html = `<div class="feedback-header ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '最优选择！' : '不是最优'} ${lvBadge}</div>`;
   html += `<div class="comparison"><div class="comp-box"><div class="comp-label">你的出牌</div><div class="comp-tile">${tileToString(userTile)}</div><div class="comp-outs">${userResult.outs}</div><div class="comp-outs-label">进张（向听 ${userResult.shanten}）</div></div><div class="comp-box"><div class="comp-label">最优出牌</div><div class="comp-tile" style="color:#44dd44">${tileToString(optimal.tile)}</div><div class="comp-outs">${optimal.outs}</div><div class="comp-outs-label">进张（向听 ${optimal.shanten}）</div></div></div>`;
   html += `<div class="explanation">${expl.text}</div><div class="tip">${expl.tip}</div>`;
